@@ -83,7 +83,7 @@ abline(h = 4*mean(cooksd, na.rm=T), col="red")  # add cutoff line
 text(x=1:length(cooksd)+1, y=cooksd, labels=ifelse(cooksd>4*mean(cooksd, na.rm=T),names(cooksd),""), col="red")  # add labels
 ```
 
-https://github.com/ur4me/House-prices/blob/master/Influential%20Obs%20by%20Cooks%20distance(test).png
+![Alt text](https://github.com/ur4me/House-prices/blob/master/Influential%20Obs%20by%20Cooks%20distance(test).png)
 
 
 It shows that row 2550 is the most outstanding outlier. As we need to predict the house price for this row, I will not remove the row; however, I will check which numbers made this row as an outlier.
