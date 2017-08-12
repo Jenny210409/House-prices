@@ -33,6 +33,7 @@ total <- as.data.frame(unclass(total))
 #check duplicate
 nrow(train) - nrow(unique(train))
 ```
+Compare to the Titanic project, it seems like I don't need to separate certain column or add meaningful column.
 #### Replace missing values
 ```
 miceMod <- mice(total, method="rf")
@@ -41,158 +42,76 @@ miceOutput <- complete(miceMod)
 colnames(miceOutput)[colSums(is.na(miceOutput)) > 0]
 ```
 
-#### Outlier handling
-This could be one of the most important and time consuming process. I will use Multivariate Model Approach, Cooks Distance, to find out outliers.
-#outliers removing
-mod <- lm(SalePrice ~ ., data=train)
-cooksd <- cooks.distance(mod)
-plot(cooksd, pch="*", cex=2, main="Influential Obs by Cooks distance")  # plot cook's distance
-abline(h = 4*mean(cooksd, na.rm=T), col="red")  # add cutoff line
-text(x=1:length(cooksd)+1, y=cooksd, labels=ifelse(cooksd>4*mean(cooksd, na.rm=T),names(cooksd),""), col="red")  # add labels
-as.numeric(names(cooksd)[(cooksd > 30*mean(cooksd, na.rm=T))])
-
-train1 <- train[-c(186,524,584,596,667,692,770,1183),]
 
 
 #### Separating back
 ```
+
+#change to numeric
+indx <- sapply(miceOutput, is.factor)
+miceOutput[indx] <- lapply(miceOutput[indx], function(x) as.numeric(as.factor(x)))
 #separate
 train <- miceOutput[1:1460,]
 test <- miceOutput[1461:2919,]
 ```
 
+#### Outlier handling
+This could be one of the most important and time consuming process. I will use Multivariate Model Approach, Cooks Distance, to find out outliers.
+
+```
+mod <- lm(SalePrice ~ ., data=train)
+cooksd <- cooks.distance(mod)
+plot(cooksd, pch="*", cex=2, main="Influential Obs by Cooks distance")  # plot cook's distance
+abline(h = 4*mean(cooksd, na.rm=T), col="red")  # add cutoff line
+text(x=1:length(cooksd)+1, y=cooksd, labels=ifelse(cooksd>4*mean(cooksd, na.rm=T),names(cooksd),""), col="red")  # add labels
+```
+
+It shows that there are 4 outstanding outliers.
+I will remove those 4 rows.
+```
+train <- train[-c(524,692,1183,1299),]
+```
+
+How about test data? Let's check the outliers in test data.
+```
+mod <- lm(SalePrice ~ ., data=test)
+cooksd <- cooks.distance(mod)
+plot(cooksd, pch="*", cex=2, main="Influential Obs by Cooks distance")  # plot cook's distance
+abline(h = 4*mean(cooksd, na.rm=T), col="red")  # add cutoff line
+text(x=1:length(cooksd)+1, y=cooksd, labels=ifelse(cooksd>4*mean(cooksd, na.rm=T),names(cooksd),""), col="red")  # add labels
+```
+
+It shows that row 2550 is the most outstanding outlier. As we need to predict the house price for this row, I will not remove the row; however, I will check which numbers made this row as an outlier.
+
+```
+test[test$Id == 2550,]
+summary(test)
+```
+By comparing those 2 results, it seems like we need to replace values in 3 columns (BsmtFinSF1, TotalBsmtSF, X1stFlrSF)
+```
+#replace outliers
+model <- randomForest(BsmtFinSF1 ~ ., data=test)
+prediction <- predict(model, test1[test1$Id == 2550,])
+test1[test1$Id == 2550,"BsmtFinSF1"] <- prediction
+
+model <- randomForest(TotalBsmtSF ~ ., data=test)
+prediction <- predict(model, test1[test1$Id == 2550,])
+test1[test1$Id == 2550,"TotalBsmtSF"] <- prediction
+
+model <- randomForest(X1stFlrSF ~ ., data=test)
+prediction <- predict(model, test1[test1$Id == 2550,])
+test1[test1$Id == 2550,"X1stFlrSF"] <- prediction
+```
 ## Prediction
 
-#use Xgboost
-require(caret)
-require(corrplot)
-require(Rtsne)
-require(xgboost)
-require(stats)
-require(knitr)
-require(ggplot2)
-knitr::opts_chunk$set(cache=TRUE)
-
-
-#change to numeric
-train2 <- train1
-indx <- sapply(train2, is.factor)
-train2[indx] <- lapply(train2[indx], function(x) as.numeric(as.factor(x)))
-
-indx <- sapply(test, is.factor)
-test[indx] <- lapply(test[indx], function(x) as.numeric(as.factor(x)))
-
+#### I will predict the test data using Random Forest model
+```
 #predict with Random Forest
 model_1 <- randomForest(SalePrice ~ ., data=train2)
 prediction <- predict(model_1, test)
 solution <- data.frame(Id = test$Id, SalePrice = prediction)
 write.csv(solution, file = 'random_forest_Sol.csv', row.names = F)
+```
 
-(XGBOOST)
-#Assemble and format the data
-
-train2$log_SalePrice <- log(train2$SalePrice)
-test$log_SalePrice <- log(test$SalePrice)
-
-#Create matrices from the data frames
-trainData<- as.matrix(train2, rownames.force=NA)
-testData<- as.matrix(test, rownames.force=NA)
-
-#Turn the matrices into sparse matrices
-train3 <- as(trainData, "sparseMatrix")
-test3 <- as(testData, "sparseMatrix")
-
-#####
-#colnames(train2)
-#Cross Validate the model
-
-vars <- c(2:37, 39:86) #choose the columns we want to use in the prediction matrix
-
-trainD <- xgb.DMatrix(data = train3[,-1], label = train3[,"SalePrice"]) #Convert to xgb.DMatrix format
-
-#Cross validate the model
-cv.sparse <- xgb.cv(data = trainD,
-                    nrounds = 600,
-                    min_child_weight = 0,
-                    max_depth = 10,
-                    eta = 0.02,
-                    subsample = .7,
-                    colsample_bytree = .7,
-                    booster = "gbtree",
-                    eval_metric = "rmse",
-                    verbose = TRUE,
-                    print_every_n = 50,
-                    nfold = 4,
-                    nthread = 2,
-                    objective="reg:linear")
-
-#find minimum error
-min.merror.idx = which.min(cv.sparse$evaluation_log[, test_rmse_mean])
-
-#Train the model
-
-#Choose the parameters for the model
-param <- list(colsample_bytree = .7,
-              subsample = .7,
-              booster = "gbtree",
-              max_depth = 10,
-              eta = 0.02,
-              eval_metric = "rmse",
-              objective="reg:linear")
-
-
-#Train the model using those parameters
-bstSparse <-
-  xgb.train(params = param,
-            data = trainD,
-            nrounds = min.merror.idx,
-            watchlist = list(train = trainD),
-            verbose = TRUE,
-            print_every_n = 50,
-            nthread = 2)
-
-
-testD <- xgb.DMatrix(data = test3[,-1])
-#Column names must match the inputs EXACTLY
-prediction <- predict(bstSparse, testD) #Make the prediction based on the half of the training data set aside
-
-
-#save
-solution <- data.frame(Id = test$Id, SalePrice = prediction)
-write.csv(solution, file = 'xgb_Sol.csv', row.names = F)
-
-
-[another XGB]
-train1[] <- lapply(train1, as.numeric)
-test[]<-lapply(test, as.numeric)
-
-dtrain=xgb.DMatrix(as.matrix(train1),label= train1$SalePrice)
-dtest=xgb.DMatrix(as.matrix(test))
-
-#xgboost parameters
-xgb_params = list(
-  seed = 0,
-  colsample_bytree = 0.5,
-  subsample = 0.8,
-  eta = 0.02, 
-  objective = 'reg:linear',
-  max_depth = 12,
-  alpha = 1,
-  gamma = 2,
-  min_child_weight = 1,
-  base_score = 7.76
-)
-
-xg_eval_mae <- function (yhat, dtrain) {
-  y = getinfo(dtrain, "label")
-  err= mae(exp(y),exp(yhat) )
-  return (list(metric = "error", value = err))
-}
-
-best_n_rounds=150 # try more rounds
-
-#train data
-gb_dt=xgb.train(xgb_params,dtrain,nrounds = as.integer(best_n_rounds))
-prediction <- predict(gb_dt,dtest)
-solution <- data.frame(Id = test$Id, SalePrice = prediction)
-write.csv(solution, file = 'xgb_Sol2.csv', row.names = F)
+## Conclusion
+I am on 997th for the result. I will amend the process and use XGBOOST to get better result next time. 
