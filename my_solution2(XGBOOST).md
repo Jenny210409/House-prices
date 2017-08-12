@@ -6,7 +6,7 @@
 - [Introduction](#introduction)
 - [Preparation](#preparation)
 - [Prediction](#prediction)
-- [Conclusion](#conclustion)
+- [Conclusion](#conclusion)
 
 
 ## Introduction
