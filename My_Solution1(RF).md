@@ -6,7 +6,6 @@
 - [Introduction](#introduction)
 - [Preparation](#preparation)
 - [Prediction](#prediction)
-- [Conclusion](#conclusion)
 
 
 ## Introduction
@@ -113,5 +112,4 @@ solution <- data.frame(Id = test$Id, SalePrice = prediction)
 write.csv(solution, file = 'random_forest_Sol.csv', row.names = F)
 ```
 
-## Conclusion
-I am on 997th for the result. I will amend the process and use XGBOOST to get better result next time. 
+
