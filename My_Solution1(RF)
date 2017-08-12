@@ -1,27 +1,48 @@
-House Prices
+# **House Prices**
+*Predict House Prices*
 
+## Table of contents
+
+- [Introduction](#introduction)
+- [Preparation](#preparation)
+- [Prediction](#prediction)
+- [Conclusion](#conclusion)
+
+
+## Introduction
+I will use RandomForest to predict house prices. As there are too many Nas, I will use Mice to replace missing values.
+
+## Preparation
+#### Initial works
+```
+library(plyr)
 library(dplyr)
 library(mice)
 library(xgboost)
+library(randomForest)
+library(hydroGOF)
+```
+```
 setwd('c:/kaggle/house prices')
-
+#retrieve train and test
 train <- read.csv('train.csv', na.strings = c("", "NA"), stringsAsFactors = F)
-
 test <- read.csv('test.csv', na.strings = c("", "NA"), stringsAsFactors = F)
+#combine train and test
 total <- bind_rows(train, test)
-
 total <- as.data.frame(unclass(total))
-
+#check duplicate
+nrow(train) - nrow(unique(train))
+```
+#### Replace missing values
+```
 miceMod <- mice(total, method="rf")
 miceOutput <- complete(miceMod)
-
+#Check whether there is missing values
 colnames(miceOutput)[colSums(is.na(miceOutput)) > 0]
+```
 
-#separate
-train <- miceOutput[1:1460,]
-test <- miceOutput[1461:2919,]
-
-
+#### Outlier handling
+This could be one of the most important and time consuming process. I will use Multivariate Model Approach, Cooks Distance, to find out outliers.
 #outliers removing
 mod <- lm(SalePrice ~ ., data=train)
 cooksd <- cooks.distance(mod)
@@ -32,6 +53,15 @@ as.numeric(names(cooksd)[(cooksd > 30*mean(cooksd, na.rm=T))])
 
 train1 <- train[-c(186,524,584,596,667,692,770,1183),]
 
+
+#### Separating back
+```
+#separate
+train <- miceOutput[1:1460,]
+test <- miceOutput[1461:2919,]
+```
+
+## Prediction
 
 #use Xgboost
 require(caret)
