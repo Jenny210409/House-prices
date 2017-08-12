@@ -64,7 +64,7 @@ plot(cooksd, pch="*", cex=2, main="Influential Obs by Cooks distance")  # plot c
 abline(h = 4*mean(cooksd, na.rm=T), col="red")  # add cutoff line
 text(x=1:length(cooksd)+1, y=cooksd, labels=ifelse(cooksd>4*mean(cooksd, na.rm=T),names(cooksd),""), col="red")  # add labels
 ```
-![Alt text](Influentail Obs by Cooks distance(train).png)
+![Alt text](https://github.com/ur4me/House-prices/blob/master/Influentail%20Obs%20by%20Cooks%20distance(train).png)
 It shows that there are 4 outstanding outliers.
 I will remove those 4 rows.
 ```
