@@ -3,16 +3,8 @@
 
 ## Competition Description
 
-Ask a home buyer to describe their dream house, and they probably won't begin with the height of the basement ceiling or the proximity to an east-west railroad. But this playground competition's dataset proves that much more influences price negotiations than the number of bedrooms or a white-picket fence.
+In this competition, Kaggle is challenging you to build a model that predicts the total ride duration of taxi trips in New York City. Your primary dataset is one released by the NYC Taxi and Limousine Commission, which includes pickup time, geo-coordinates, number of passengers, and several other variables.
 
-With 79 explanatory variables describing (almost) every aspect of residential homes in Ames, Iowa, this competition challenges you to predict the final price of each home.
+## Datasets Prizes
 
-## Practice Skills
-
-Creative feature engineering 
-Advanced regression techniques like random forest and gradient boosting
-
-
-## Goal
-
-It is your job to predict the sales price for each house. For each Id in the test set, you must predict the value of the SalePrice variable. 
+Total Prize : 30,000 USD
