@@ -10,7 +10,7 @@
 
 
 ## Introduction
-Last time I used RandomForest to predict house prices. I will use XGBOOST for this time and check whether there is an improvement.
+Last time I used RandomForest to predict house prices. I will use XGBOOST this time and check whether there is an improvement.
 
 ## Preparation
 #### Initial works
@@ -33,7 +33,8 @@ total <- as.data.frame(unclass(total))
 #check duplicate
 nrow(train) - nrow(unique(train))
 ```
-Compare to the Titanic project, it seems like I don't need to separate certain column or add meaningful column.
+
+
 #### Replace missing values
 ```
 miceMod <- mice(total, method="rf")
