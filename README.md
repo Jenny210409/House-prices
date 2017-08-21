@@ -159,6 +159,6 @@ write.csv(solution, file = 'xgb_Sol2.csv', row.names = F)
 ```
 
 ## Conclusion
-My public score for Random Forest model was 0.14739 whereas 0.14654 for this time. Accordingly, it increased slightly and it seems like I can get better score if I amend the procedure and use ensemble learning method.
+My public score(RMSE) for Random Forest model was 0.14739 whereas 0.14654 for this time. Accordingly, it increased slightly and it seems like I can get better score if I amend the procedure and use ensemble learning method.
 
 
