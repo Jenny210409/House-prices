@@ -241,6 +241,9 @@ text(x=1:length(cooksd)+1, y=cooksd, labels=ifelse(cooksd>4*mean(cooksd, na.rm=T
 
 which(cooksd >0.2)
 ```
+
+![Alt text](https://github.com/ur4me/House-prices/blob/master/Cooks%20distance2.png)
+
 It shows that there are 2 outstanding outliers.
 I will remove those 2 rows.
 
@@ -251,14 +254,9 @@ train1[] <- lapply(train1, as.numeric)
 test1[]<-lapply(test1, as.numeric)
 ```
 
-![Alt text](https://github.com/ur4me/House-prices/blob/master/Cooks%20distance2.png)
 
 
-It shows that there are 4 outstanding outliers.
-I will remove those 4 rows.
-```
-train <- train[-c(524,692,1183,1299),]
-```
+
 
 ## Prediction
 
@@ -293,7 +291,7 @@ withoutRV1 <- testing %>% select(-SalePrice)
 dtest <- xgb.DMatrix(as.matrix(withoutRV1))
 ```
 
-#### XGBOOST parameter tuning
+#### XGBOOST parameter tuning (Grid Search)
 
 ```
 train.control <- trainControl(method = "repeatedcv", repeats = 2,number = 3, search = "grid")
