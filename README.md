@@ -95,7 +95,9 @@ options(width=125)
 arrange(cbind(attr=rownames(attStats(bor.results)), attStats(bor.results)),desc(medianImp))
 ```
        
-            
+```            
+
+            attr      meanImp   medianImp      minImp     maxImp normHits  decision
 1      GrLivArea 21.213486312 21.18182159 18.56320442 23.3509629     1.00 Confirmed
 2    OverallQual 17.419759567 17.51118974 15.18490247 20.1088880     1.00 Confirmed
 3      X2ndFlrSF 15.324977047 15.23999674 12.27627567 17.7623584     1.00 Confirmed
@@ -175,7 +177,7 @@ arrange(cbind(attr=rownames(attStats(bor.results)), attStats(bor.results)),desc(
 77  LowQualFinSF -0.779259956 -1.12970777 -2.06881059  0.7705054     0.00  Rejected
 78      PoolArea -0.701352686 -1.17867338 -2.15356689  1.2478794     0.00  Rejected
 79        PoolQC -1.171231817 -1.19712846 -2.22743669 -0.2361224     0.00  Rejected
-
+```
 
 
 
