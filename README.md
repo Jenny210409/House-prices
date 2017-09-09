@@ -179,7 +179,7 @@ arrange(cbind(attr=rownames(attStats(bor.results)), attStats(bor.results)),desc(
 79        PoolQC -1.171231817 -1.19712846 -2.22743669 -0.2361224     0.00  Rejected
 ```
 
-
+```
 
 CONFIRMED_ATTR <- c("MSSubClass","MSZoning","LotArea","LotShape","LandContour","Neighborhood",
                     "BldgType","HouseStyle","OverallQual","OverallCond","YearBuilt",
@@ -191,7 +191,7 @@ CONFIRMED_ATTR <- c("MSSubClass","MSZoning","LotArea","LotShape","LandContour","
                     "Fireplaces","FireplaceQu","GarageType","GarageYrBlt","GarageFinish",
                     "GarageCars","GarageArea","GarageQual","GarageCond","PavedDrive","WoodDeckSF",
                     "OpenPorchSF","Fence")
-
+```
 
 
 #### Combine train and test data sets
