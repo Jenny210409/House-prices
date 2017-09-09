@@ -250,8 +250,6 @@ I will remove those 2 rows.
 ```
 train1 <- train1[-c(524,1299),]
 
-train1[] <- lapply(train1, as.numeric)
-test1[]<-lapply(test1, as.numeric)
 ```
 
 
