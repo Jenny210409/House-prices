@@ -399,9 +399,55 @@ imp_matrix %>%
 
 ![Alt text](https://github.com/ur4me/House-prices/blob/master/importance.png)
 
+My public score(RMSE) is dropped down to 0.13227 which is a great improvement. 
 
+#### Ensemble method
+This time I will ensemble 6 models and check whether I can get better RMSE.
+
+```
+library("caretEnsemble")
+train.control <- trainControl(method = "repeatedcv", repeats = 2,number = 3)
+model_list <- caretList(
+  SalePrice~., data=training,
+  trControl=train.control, metric="RMSE",
+  methodList=c("glm", "rf" , "glmboost", "neuralnet", "blackboost", "nnet"))
+  
+greedy_ensemble <- caretEnsemble(
+  model_list, 
+  metric="RMSE",
+  trControl=train.control)
+summary(greedy_ensemble)
+rmse(testing$SalePrice, prediction)
+```
+I got 0.1034 RMSE so seems like I can get better score.
+
+```
+# real prediction
+model_list1 <- caretList(
+  SalePrice~., data=train1,
+  trControl=train.control, metric="RMSE",
+  methodList=c("glm", "rf" , "glmboost", "neuralnet", "blackboost", "nnet"))
+
+greedy_ensemble1 <- caretEnsemble(
+  model_list1, 
+  metric="RMSE",
+  trControl=train.control)
+summary(greedy_ensemble)
+
+prediction1 <- predict(greedy_ensemble1, test1)
+
+#save the file (Need to use exp and -1 to change it back)
+solution <- data.frame(id = test$Id, SalePrice = exp(prediction1)-1)
+
+#check negative value just in case
+which(solution$SalePrice < 0)
+
+#save
+write.csv(solution, file = 'xgb_Sol8.csv', row.names = F)
+```
+I got 0.12935 which is slightly better than just using XGBOOST. 
 
 ## Conclusion
-My public score(RMSE) is dropped down to 0.13227 which is a great improvement. 
+Boruta package improved my RMSE dramatically. Furthermore, I checked that using ensemble method is better than just using XGBOOST.
 
 
