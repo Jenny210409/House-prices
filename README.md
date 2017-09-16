@@ -402,7 +402,7 @@ imp_matrix %>%
 My public score(RMSE) is dropped down to 0.13227 which is a great improvement. 
 
 #### Ensemble method
-This time I will ensemble 6 models and check whether I can get better RMSE.
+This time I will ensemble 7 models and check whether I can get better RMSE.
 
 ```
 library("caretEnsemble")
@@ -410,7 +410,7 @@ train.control <- trainControl(method = "repeatedcv", repeats = 2,number = 3)
 model_list <- caretList(
   SalePrice~., data=training,
   trControl=train.control, metric="RMSE",
-  methodList=c("glm", "rf" , "glmboost", "neuralnet", "blackboost", "nnet"))
+  methodList=c("glm", "rf" , "glmboost", "neuralnet", "blackboost", "nnet", "gbm"))
   
 greedy_ensemble <- caretEnsemble(
   model_list, 
@@ -426,7 +426,7 @@ I got 0.1034 RMSE so seems like I can get better score.
 model_list1 <- caretList(
   SalePrice~., data=train1,
   trControl=train.control, metric="RMSE",
-  methodList=c("glm", "rf" , "glmboost", "neuralnet", "blackboost", "nnet"))
+  methodList=c("glm", "rf" , "glmboost", "neuralnet", "blackboost", "nnet", "gbm"))
 
 greedy_ensemble1 <- caretEnsemble(
   model_list1, 
@@ -445,7 +445,7 @@ which(solution$SalePrice < 0)
 #save
 write.csv(solution, file = 'xgb_Sol8.csv', row.names = F)
 ```
-I got 0.12935 which is slightly better than just using XGBOOST. 
+I got 0.12844 which is slightly better than just using XGBOOST. 
 
 ## Conclusion
 Boruta package improved my RMSE dramatically. Furthermore, I checked that using ensemble method is better than just using XGBOOST.
