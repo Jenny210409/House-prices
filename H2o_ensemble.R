@@ -1,3 +1,8 @@
+library(bit64)
+library(devtools)
+library(h2oEnsemble)
+
+
 training1 <- training
 testing1 <- testing
 # training1[] <- lapply(training1, as.numeric)
