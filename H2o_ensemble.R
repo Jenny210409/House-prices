@@ -20,8 +20,6 @@ metalearner <- "SL.glm"
 y <- "SalePrice"
 x <- setdiff(names(training_frame), y)
 family <- "AUTO"
-training_frame[,c(y)] <- as.factor(training_frame[,c(y)]) #Force Binary classification
-validation_frame[,c(y)] <- as.factor(validation_frame[,c(y)]) # check to validate that this guarantees the same 0/1 mapping?
 
 fit <- h2o.ensemble(x = x, y = y, 
                     training_frame = training_frame, 
