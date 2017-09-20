@@ -442,7 +442,7 @@ which(solution$SalePrice < 0)
 #save
 write.csv(solution, file = 'xgb_Sol8.csv', row.names = F)
 ```
-I got 0.12844 which is slightly better than just using XGBOOST. 
+I got public score 0.12844 which is slightly better than just using XGBOOST. 
 
 #### H2o Ensemble model
 
@@ -525,7 +525,7 @@ which(solution$SalePrice < 0)
 #save
 write.csv(solution, file = 'h2o.csv', row.names = F)
 ```
-
+I got public score 0.12633 which is the best.
 
 
 ## Conclusion
