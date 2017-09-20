@@ -265,8 +265,6 @@ test1[]<-lapply(test1, as.numeric)
 #convert SalePrice
 train1 <- train1 %>% mutate(SalePrice = log(SalePrice + 1))
 ```
-
-#### Train set separation
 I will separate train set into subtrain and subtest to set a model and test the model. 
 
 ```
@@ -280,6 +278,9 @@ partition <- createDataPartition(y=outcome,
 training <- train1[partition,]
 testing <- train1[-partition,]
 ```
+
+#### Using XGBOOST
+
 ```
 #xgb matrix
 withoutRV <- training %>% select(-SalePrice)
@@ -287,10 +288,8 @@ dtrain <- xgb.DMatrix(as.matrix(withoutRV),label = training$SalePrice)
 withoutRV1 <- testing %>% select(-SalePrice)
 dtest <- xgb.DMatrix(as.matrix(withoutRV1))
 ```
-
-#### XGBOOST parameter tuning (Grid Search)
-
 ```
+#XGBOOST parameter tuning (Grid Search)
 train.control <- trainControl(method = "repeatedcv", repeats = 2,number = 3, search = "grid")
 
 tune.grid <- expand.grid(nrounds = c(100,150),
@@ -333,9 +332,8 @@ xgb_cv <- xgb.cv(xgb_params,dtrain,early_stopping_rounds = 10, nfold = 4, print_
 ```
 101 was the best iteration.
 
-
-#### check the model
 ```
+# check the model
 gb_dt <- xgb.train(params = xgb_params,
                    data = dtrain,
                    verbose = 1, maximize =F,
@@ -373,7 +371,6 @@ gb_dt <- xgb.train(params = xgb_params,
 prediction <- predict(gb_dt,dtest1)
 ```
 
-#### Save
 ```
 #save the file (Need to use exp and -1 to change it back)
 solution <- data.frame(id = test$Id, SalePrice = exp(prediction)-1)
@@ -401,7 +398,7 @@ imp_matrix %>%
 
 My public score(RMSE) is dropped down to 0.13227 which is a great improvement. 
 
-#### Ensemble method
+#### Caret Ensemble model
 This time I will ensemble 7 models and check whether I can get better RMSE.
 
 ```
@@ -447,7 +444,94 @@ write.csv(solution, file = 'xgb_Sol8.csv', row.names = F)
 ```
 I got 0.12844 which is slightly better than just using XGBOOST. 
 
+#### H2o Ensemble model
+
+```
+localH2o = h2o.init(nthreads = 5)
+
+
+training_frame <- as.h2o(training1)
+validation_frame <- as.h2o(testing1)
+
+# Specify the base learner library & the metalearner
+learner <- c("h2o.glm.wrapper", "h2o.randomForest.wrapper", 
+             "h2o.gbm.wrapper", "h2o.deeplearning.wrapper")
+metalearner <- "SL.glm"
+
+
+
+y <- "SalePrice"
+x <- setdiff(names(training_frame), y)
+family <- "AUTO"
+
+fit <- h2o.ensemble(x = x, y = y, 
+                    training_frame = training_frame, 
+                    family = family, 
+                    learner = learner, 
+                    metalearner = metalearner,
+                    cvControl = list(V = 5, shuffle = TRUE))
+
+
+
+pred <- predict.h2o.ensemble(fit, validation_frame)
+
+pred$pred
+
+rmse(testing$SalePrice, pred$pred)
+```
+I got 0.1017 RMSE which is lower(better) than XGBOOST and Caret Ensemble.
+
+
+```
+#Real prediction
+train2 <- train1
+test2 <- test1
+
+
+localH2o = h2o.init(nthreads = 5)
+
+
+training_frame <- as.h2o(train2)
+validation_frame <- as.h2o(test2)
+
+# Specify the base learner library & the metalearner
+learner <- c("h2o.glm.wrapper", "h2o.randomForest.wrapper", 
+             "h2o.gbm.wrapper", "h2o.deeplearning.wrapper")
+metalearner <- "SL.glm"
+
+
+y <- "SalePrice"
+x <- setdiff(names(training_frame), y)
+family <- "AUTO"
+
+fit <- h2o.ensemble(x = x, y = y, 
+                    training_frame = training_frame, 
+                    family = family, 
+                    learner = learner, 
+                    metalearner = metalearner,
+                    cvControl = list(V = 5, shuffle = TRUE))
+
+
+
+pred <- predict.h2o.ensemble(fit, validation_frame)
+
+
+
+
+
+#save the file (Need to use exp and -1 to change it back)
+solution <- data.frame(id = test$Id, SalePrice = exp(pred$pred)-1)
+
+#check negative value just in case
+which(solution$SalePrice < 0)
+
+#save
+write.csv(solution, file = 'h2o.csv', row.names = F)
+
+
+
+
 ## Conclusion
-Boruta package improved my RMSE dramatically. Furthermore, I checked that using ensemble method is better than just using XGBOOST.
+Boruta package improved my RMSE dramatically as my XGBOOST score was much better than not using Boruta package. I found out that using ensemble is better than just using one XGBOOST. My Kaggle score for using Caret Ensemble and H2o Ensemble is almost same but in terms of speed, Caret Ensemble was faster than Caret Ensemble. 
 
 
