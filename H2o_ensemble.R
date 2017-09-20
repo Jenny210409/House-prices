@@ -29,7 +29,6 @@ fit <- h2o.ensemble(x = x, y = y,
                     cvControl = list(V = 5, shuffle = TRUE))
 
 
-prediction <- predict(fit, validation_frame)
 pred <- predict.h2o.ensemble(fit, validation_frame)
 
 prediction$pred
