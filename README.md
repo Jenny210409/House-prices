@@ -516,9 +516,6 @@ fit <- h2o.ensemble(x = x, y = y,
 pred <- predict.h2o.ensemble(fit, validation_frame)
 
 
-
-
-
 #save the file (Need to use exp and -1 to change it back)
 solution <- data.frame(id = test$Id, SalePrice = exp(pred$pred)-1)
 
@@ -527,11 +524,11 @@ which(solution$SalePrice < 0)
 
 #save
 write.csv(solution, file = 'h2o.csv', row.names = F)
-
+```
 
 
 
 ## Conclusion
-Boruta package improved my RMSE dramatically as my XGBOOST score was much better than not using Boruta package. I found out that using ensemble is better than just using one XGBOOST. My Kaggle score for using Caret Ensemble and H2o Ensemble is almost same but in terms of speed, Caret Ensemble was faster than Caret Ensemble. 
+Boruta package improved my RMSE dramatically as my XGBOOST score with Boruta package was much better than not using Boruta package. I found out that using ensemble is better than just using one XGBOOST. My Kaggle score for using Caret Ensemble and H2o Ensemble is almost same but in terms of speed, Caret Ensemble was faster than Caret Ensemble. 
 
 
