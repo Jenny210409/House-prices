@@ -529,7 +529,7 @@ write.csv(solution, file = 'h2o.csv', row.names = F)
 
 h2o.shutdown()
 ```
-I got public score 0.12633 which is the best.
+I got public score 0.12633 RMSE.
 
 
 ## Conclusion
