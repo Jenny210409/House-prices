@@ -447,7 +447,9 @@ I got public score 0.12844 which is slightly better than just using XGBOOST.
 #### H2o Ensemble model
 
 ```
-localH2o = h2o.init(nthreads = 5)
+options(java.parameters = "- Xmx1024m")
+library(h2oEnsemble)
+localH2o = h2o.init(nthreads = -1, max_mem_size = "4g")
 
 
 training_frame <- as.h2o(training1)
