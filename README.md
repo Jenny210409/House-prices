@@ -533,6 +533,6 @@ I got public score 0.12633 RMSE.
 
 
 ## Conclusion
-Boruta package improved my RMSE dramatically as my XGBOOST score with Boruta package was much better than not using Boruta package. I found out that using ensemble is better than just using one XGBOOST. My Kaggle score for using Caret Ensemble and H2o Ensemble is almost same but in terms of speed, Caret Ensemble was faster than Caret Ensemble. 
+Boruta package improved my RMSE dramatically as my XGBOOST score with Boruta package was much better than not using Boruta package. I found out that using ensemble is better than just using one XGBOOST. My Kaggle score for using Caret Ensemble and H2o Ensemble is almost same but in terms of speed, H2o Ensemble was faster than Caret Ensemble. 
 
 
