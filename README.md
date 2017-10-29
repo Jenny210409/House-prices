@@ -352,22 +352,11 @@ I got 0.1070478 RMSE which looks good.
 ```
 withoutRV <- train1 %>% select(-SalePrice)
 
-dtrain1 <- xgb.DMatrix(as.matrix(withoutRV),label = train1$SalePrice)
+
 dtest1 <- xgb.DMatrix(as.matrix(test1))
 
 
-#cross-validation and checking iterations
-set.seed(4321)
-xgb_cv <- xgb.cv(xgb_params,dtrain1,early_stopping_rounds = 10, nfold = 4, print_every_n = 5, nrounds=1000, nthread=6)
 ```
-This time I got 104 iterations.
-
-```
-gb_dt <- xgb.train(params = xgb_params,
-                   data = dtrain1,
-                   verbose = 1, maximize =F,
-                   nrounds = 104, nthread=6)
-
 prediction <- predict(gb_dt,dtest1)
 ```
 
