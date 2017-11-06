@@ -356,7 +356,7 @@ withoutRV <- train1 %>% select(-SalePrice)
 dtest1 <- xgb.DMatrix(as.matrix(test1))
 
 
-```
+
 prediction <- predict(gb_dt,dtest1)
 ```
 
