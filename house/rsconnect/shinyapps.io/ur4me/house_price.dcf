@@ -1,0 +1,12 @@
+name: house_price
+title: house_price
+username:
+account: ur4me
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 232292
+bundleId: 1060681
+url: https://ur4me.shinyapps.io/house_price/
+when: 1509940622.61765
+asMultiple: FALSE
+asStatic: FALSE
