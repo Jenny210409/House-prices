@@ -17,7 +17,13 @@ train1$OverallQual <- as.factor(train1$OverallQual)
 train1$Fireplaces <- as.factor(train1$Fireplaces)
 train1$GarageCars <- as.factor(train1$GarageCars)
 
-modelFit <- train(SalePrice ~ ., data  = train1, method  = "rf")
+control <- trainControl(method="repeatedcv", number=2, repeats=2)
+seed <- 7
+metric <- "RMSE"
+set.seed(seed)
+mtry <- 3
+tunegrid <- expand.grid(.mtry=mtry)
+modelFit <- train(SalePrice~., data=train1, method="rf", metric=metric, tuneGrid=tunegrid, trControl=control)
 
 shinyServer(function(input, output){
   
