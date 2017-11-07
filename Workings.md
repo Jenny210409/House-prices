@@ -37,7 +37,7 @@ test1 <- test
 ```
 
 ### Boruta Feature Importance Analysis
-As there are more than 80 variables, I will use Boruta packange and remove some variables which seem to be not important. 
+As there are more than 80 variables, I will use Boruta package and remove some variables which seem to be not important. 
 
 ```
 # preparation
