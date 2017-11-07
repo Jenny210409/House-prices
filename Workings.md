@@ -25,6 +25,7 @@ library(Boruta)
 library(pROC)
 library(hydroGOF)
 library(tibble)
+library(corrplot)
 ```
 ```
 setwd('c:/kaggle/house prices')
@@ -195,6 +196,7 @@ CONFIRMED_ATTR <- c("MSSubClass","MSZoning","LotArea","LotShape","LandContour","
 
 
 #### Combine train and test data sets
+
 ```
 #combine train and test
 total <- bind_rows(train1, test1)
@@ -207,6 +209,7 @@ total <- total[,CONFIRMED_ATTR]
 
 
 #### Impute missing values using Mice package
+
 ```
 miceMod <- mice(total, method="rf")
 miceOutput <- complete(miceMod)
@@ -215,8 +218,8 @@ colnames(miceOutput)[colSums(is.na(miceOutput)) > 0]
 ```
 
 #### Separating back
-```
 
+```
 #change to numeric
 indx <- sapply(miceOutput, is.factor)
 miceOutput[indx] <- lapply(miceOutput[indx], function(x) as.numeric(as.factor(x)))
@@ -227,6 +230,34 @@ test1 <- miceOutput[1461:2919,]
 SalePrice <- train$SalePrice
 train1 <- cbind(train1,SalePrice)
 ```
+
+#### Correlation Analysis
+
+I would like to see correlation among numeric variables before proceeding to the modeling procedures.
+
+```{r}
+numeric_var <- names(train1)[which(sapply(train1, is.numeric))]
+corMatrix <- cor(train1[, numeric_var])
+corrplot(corMatrix, order = "FPC", method = "color", type = "lower", 
+         tl.cex = 0.6, tl.col = rgb(0, 0, 0))
+```
+
+![Alt text](https://github.com/ur4me/House-prices/blob/master/Correlation.png)
+
+#### Exploratory analysis
+
+I will use Tableau to visualise our data. I will see the relationship between important variables and sales prices.
+
+![Alt text](https://github.com/ur4me/House-prices/blob/master/Price%20vs%20TotalBsmtSF.PNG)
+![Alt text](https://github.com/ur4me/House-prices/blob/master/price%20vs%201stFlrSF.PNG)
+![Alt text](https://github.com/ur4me/House-prices/blob/master/price%20vs%20GrLivArea.PNG)
+![Alt text](https://github.com/ur4me/House-prices/blob/master/price%20vs%20LotArea.PNG)
+![Alt text](https://github.com/ur4me/House-prices/blob/master/price%20vs%20Remodel%20date.PNG)
+![Alt text](https://github.com/ur4me/House-prices/blob/master/price%20vs%20fireplaces.PNG)
+![Alt text](https://github.com/ur4me/House-prices/blob/master/price%20vs%20garage%20size.PNG)
+![Alt text](https://github.com/ur4me/House-prices/blob/master/price%20vs%20garageArea.PNG)
+![Alt text](https://github.com/ur4me/House-prices/blob/master/price%20vs%20quality.PNG)
+![Alt text](https://github.com/ur4me/House-prices/blob/master/price%20vs%20year%20built.PNG)
 
 #### Outlier handling
 I will use Multivariate Model Approach, Cooks Distance, to find out outliers.
