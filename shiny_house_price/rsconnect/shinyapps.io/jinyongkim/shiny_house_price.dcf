@@ -1,0 +1,12 @@
+name: shiny_house_price
+title: shiny_house_price
+username:
+account: jinyongkim
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 232632
+bundleId: 1062356
+url: https://jinyongkim.shinyapps.io/shiny_house_price/
+when: 1510027909.31911
+asMultiple: FALSE
+asStatic: FALSE

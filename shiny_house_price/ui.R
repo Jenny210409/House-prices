@@ -1,0 +1,70 @@
+library(shiny)
+shinyUI(pageWithSidebar(
+  headerPanel("House Price Predictor"),
+  sidebarPanel(
+    p("Select data field to predict house price in Ames, Iowa."),
+    sliderInput(
+      inputId = "GrLivArea",
+      label = h3("Above grade (ground) living area square feet:"),
+      min = 334,
+      max = 3627,
+      step = 1,
+      value = 1000),
+    sliderInput(
+      inputId = "TotalBsmtSF",
+      label = h3("Total square feet of basement area:"),
+      min = 0,
+      max = 3206,
+      step = 1,
+      value = 1000),
+    radioButtons("Fireplaces", label = h3("Number of fireplaces:"),
+                 choices = list("0" = "0","1" = "1", "2" = "2", "3" = "3"), 
+                 selected = "2"),
+    sliderInput(
+      inputId = "YearBuilt",
+      label = h3("Original construction date:"),
+      min = 1872,
+      max = 2010,
+      step = 1,
+      value = 1990),
+    sliderInput(
+      inputId = "LotArea",
+      label = h3("Lot size in square feet:"),
+      min = 1300,
+      max = 215245,
+      step = 0.5,
+      value = 10000),
+    sliderInput(
+      inputId = "X1stFlrSF",
+      label = h3("First Floor square feet:"),
+      min = 334,
+      max = 3228,
+      step = 1,
+      value = 1000),
+    radioButtons("GarageCars", label = h3("Size of garage in car capacity:"),
+                 choices = list("0" = "0","1" = "1", "2" = "2", "3" = "3","4"="4"), 
+                 selected = "2"),
+    sliderInput(
+      inputId = "GarageArea",
+      label = h3("Size of garage in square feet:"),
+      min = 0,
+      max = 1390,
+      step = 1,
+      value = 100),
+    sliderInput(
+      inputId = "YearRemodAdd",
+      label = h3("Remodel date:"),
+      min = 1950,
+      max = 2010,
+      step = 1,
+      value = 1990),
+    radioButtons("OverallQual", label = h3("Overall material and finish quality:"),
+                 choices = list("1" = "1", "2" = "2", "3" = "3","4" = "4","5" = "5","6" = "6","7" = "7","8" = "8","9" = "9","10" = "10"), 
+                 selected = "3")
+  ),
+  mainPanel(
+    h3("Estimated House Price ($):"),
+    h2(verbatimTextOutput("results")),
+    p("It could take some time to calculate the probability."),
+    p("Please note that this is estimated house price."),
+    p("That means this value should be different to actual house in Ames, Iowa."))))
