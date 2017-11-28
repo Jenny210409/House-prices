@@ -10,7 +10,7 @@
 
 
 ## Introduction
-Last time I used RandomForest and XGBOOST to predict house prices and got 0.14654 RMSE. I will use XGBOOST again but amend process in order to get better RMSE.
+I will do data cleanings and use different types of models. I will check which model performs best.
 
 ## Preparation
 #### Initial works
